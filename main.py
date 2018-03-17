@@ -1,6 +1,5 @@
 import pygame
 from buttons import Button
-from pygame.locals import *
 
 pygame.init()  # Open a new window
 pygame.font.init()
@@ -15,7 +14,7 @@ size = (700, 500)
 someFont = pygame.font.SysFont('Times New Roman', 15)
 
 screen = pygame.display.set_mode(size)
-pygame.display.set_caption("hello")
+pygame.display.set_caption("Project 1")
 
 # The loop will carry on until the user exit the game (e.g. clicks the close button).
 carryOn = True
@@ -31,10 +30,15 @@ while carryOn:
     # --- Main event loop
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
-            carryOn = False  # Flag that we are done so we exit this loop. # Any reason not to just exit now?
-
+            carryOn = False  # Flag that we are done so we exit this loop.
 
         button1.checkMouseOver()
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            button1.downClick()
+
+        elif event.type == pygame.MOUSEBUTTONUP:
+            button1.upClick()
 
     # --- Game logic should go here
 
