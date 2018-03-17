@@ -1,5 +1,5 @@
 import pygame
-from buttons import MenuButton
+from buttons import Button
 from pygame.locals import *
 
 pygame.init()  # Open a new window
@@ -24,6 +24,8 @@ carryOn = True
 clock = pygame.time.Clock()
 fps = 60
 
+button1 = Button("test", someFont, [50, 50], [60, 30], screen, "auto")
+
 # -------- Main Program Loop -----------
 while carryOn:
     # --- Main event loop
@@ -31,9 +33,11 @@ while carryOn:
         if event.type == pygame.QUIT:  # If user clicked close
             carryOn = False  # Flag that we are done so we exit this loop. # Any reason not to just exit now?
 
+
+        button1.checkMouseOver()
+
     # --- Game logic should go here
 
-    button1 = MenuButton("test", someFont, [50, 50], [60, 30], screen, "auto")
 
     # --- Drawing code below:
     # First, clear the screen to white.
