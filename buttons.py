@@ -1,16 +1,15 @@
 import pygame
-
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-GRAY = (150, 150, 150)
+from colors import *
 
 
 class Button(object):
     def __init__(self, text, font, pos, size, surface, bevel=0):
         self.text = text
         self.font = font
-        self.pos = pos  # pos is (x,y), assumed to be the top left
-        self.size = size  # size is the dimensions of the button, assumed to be (x,y)
+        # Pos and size are inputted as percentages, this scales them for the screen
+        screenSize = pygame.display.get_surface().get_size()
+        self.pos = [pos[i]*screenSize[i] for i in range(0,2)]  # pos is (x,y), assumed to be the top left
+        self.size = [size[i]*screenSize[i] for i in range(0,2)]  # size is the dimensions of the button
         self.surface = surface  # The screen that the button is on
 
         self.mouseOver = False # Keeps track of if the button is being moused over
@@ -18,6 +17,8 @@ class Button(object):
 
         if bevel == "auto":
             bevel = self.size[1]/4
+        else:
+            self.bevel *= size[0]  # Scale the bevel for the screen
         self.bevel = min(min(self.size[1]/2, self.size[0]/2), bevel)  # Makes sure that the bevel is less than the sides
 
         self.render() # Rendering initializes self.box
@@ -35,6 +36,10 @@ class Button(object):
             print("Button Action")
             pass # The button's onclick actions will go here. I'm not sure how to make this happen
         self.downClicked=False
+
+    def rescale(self, oldSize, newSize): # for when the window is changed to a different size
+        self.pos = [self.pos[i]*(newSize[i]/oldSize[i]) for i in range(0,2)]
+        self.size = [self.size[i]*(newSize[i]/oldSize[i]) for i in range(0,2)]
 
     def render(self):
 

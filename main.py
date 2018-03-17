@@ -1,19 +1,18 @@
 import pygame
+from pygame.locals import *
+screenSize = (700, 500)
 from buttons import Button
+from colors import *
 
 pygame.init()  # Open a new window
 pygame.font.init()
 
 # Define some colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-GREEN = (0, 255, 0)
-RED = (255, 0, 0)
-size = (700, 500)
+
 
 someFont = pygame.font.SysFont('Times New Roman', 15)
 
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode(screenSize, RESIZABLE)
 pygame.display.set_caption("Project 1")
 
 # The loop will carry on until the user exit the game (e.g. clicks the close button).
@@ -23,7 +22,10 @@ carryOn = True
 clock = pygame.time.Clock()
 fps = 60
 
-button1 = Button("test", someFont, [50, 50], [60, 30], screen, "auto")
+buttons = [
+    Button("Join Game", someFont, [.70, .45], [.14, .07], screen, "auto"),
+    Button("Host Game", someFont, [.70, .54], [.14, .07], screen, "auto")
+]
 
 # -------- Main Program Loop -----------
 while carryOn:
@@ -32,13 +34,26 @@ while carryOn:
         if event.type == pygame.QUIT:  # If user clicked close
             carryOn = False  # Flag that we are done so we exit this loop.
 
-        button1.checkMouseOver()
+        for button in buttons:
+            button.checkMouseOver()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            button1.downClick()
+            # When clicks become a file, things below this will just be part of a function call to it
+            for button in buttons:
+                button.downClick()
 
         elif event.type == pygame.MOUSEBUTTONUP:
-            button1.upClick()
+            # When clicks become a file, things below this will just be part of a function call to it
+            for button in buttons:
+                button.upClick()
+
+        if event.type == pygame.VIDEORESIZE:
+            oldSize = screenSize
+            surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
+            screenSize = pygame.display.get_surface().get_size()
+            for button in buttons:
+                button.rescale(oldSize, screenSize)
+
 
     # --- Game logic should go here
 
@@ -47,7 +62,8 @@ while carryOn:
     # First, clear the screen to white.
     screen.fill(WHITE)
 
-    button1.render()
+    for button in buttons:
+        button.render()
 
     # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
