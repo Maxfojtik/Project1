@@ -1,14 +1,11 @@
 import pygame
 from pygame.locals import *
-screenSize = (700, 500)
-from buttons import Button
+screenSize = (1000, 600)
+from buttons import *
 from colors import *
 
-pygame.init()  # Open a new window
+pygame.init()
 pygame.font.init()
-
-# Define some colors
-
 
 someFont = pygame.font.SysFont('Times New Roman', 15)
 
@@ -23,8 +20,14 @@ clock = pygame.time.Clock()
 fps = 60
 
 buttons = [
-    Button("Join Game", someFont, [.70, .45], [.14, .07], screen, "auto"),
-    Button("Host Game", someFont, [.70, .54], [.14, .07], screen, "auto")
+    ButtonList(["Start Game", "Join Game", "Host Game", "Settings", "Credits", "Quit"], someFont, [.30, .30], [.14,.07], .03, screen, "vertical"),
+    MenuButton("Join Game", someFont, [.70, .35], [.14, .07], screen),
+    MenuButton("Host Game", someFont, [.70, .45], [.14, .07], screen),
+    MenuButton("Settings", someFont, [.70, .55], [.14, .07], screen),
+    MenuButton("Credits", someFont, [.70, .65], [.14, .07], screen),
+    MenuButton("Quit", someFont, [.70, .75], [.14, .07], screen),
+    TabButton("TabButton", someFont, [.70, .85], [.14, .07], screen),
+    TextButton("Yay Text", someFont, [.5,.5], [.14, .07], screen)
 ]
 
 # -------- Main Program Loop -----------
