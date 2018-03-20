@@ -3,14 +3,15 @@ from colors import *
 
 
 class Button(object):
-    def __init__(self, text, font, pos, size, surface, bevel="auto"):
+    def __init__(self, text, onClick, font, pos, size, bevel="auto"):
         self.text = text
+        self.onClick = onClick
         self.font = font
         # Pos and size are inputted as percentages, this scales them for the screen
         screenSize = pygame.display.get_surface().get_size()
         self.pos = [pos[i]*screenSize[i] for i in range(0,2)]  # pos is (x,y), assumed to be the top left
         self.size = [size[i]*screenSize[i] for i in range(0,2)]  # size is the dimensions of the button
-        self.surface = surface  # The screen that the button is on
+        self.surface = pygame.display.get_surface()
 
         self.mouseOver = False # Keeps track of if the button is being moused over
         self.downClicked = False # Keeps track of whether you clicked on the button but have not yet released
@@ -33,8 +34,7 @@ class Button(object):
 
     def upClick(self):
         if self.downClicked and self.checkMouseOver():
-            print("Button Action")
-            pass # The button's onclick actions will go here. I'm not sure how to make this happen
+            self.onClick()
         self.downClicked=False
 
     def rescale(self, oldSize=(1,1), newSize=(1,1)): # for when the window is changed to a different size
@@ -99,11 +99,21 @@ class MenuButton(Button):
         textSize = self.font.size(self.text)
         self.surface.blit(text, (self.pos[0]+(self.size[0]-textSize[0])/2, self.pos[1]+(self.size[1]-textSize[1])/2))
 
+class TextButton(Button):
+
+    def render(self):
+
+        text = self.font.render(self.text, False, (0, 0, 0))
+
+        textSize = self.font.size(self.text)
+        self.box = self.surface.blit(text, (self.pos[0] + (self.size[0] - textSize[0]) / 2, self.pos[1] + (self.size[1] - textSize[1]) / 2))
+
+# This needs a bit of a rework for a row of buttons before it is usable
 class TabButton(Button):
 
-    def __init__(self, text, font, pos, size, surface, bevel="auto"):
-        super(TabButton, self).__init__(text, font, pos, size, surface, bevel)
-        self.tabSelected = False
+    def __init__(self, text, onClick, font, pos, size, tabSelected=False, bevel="auto"):
+        super(TabButton, self).__init__(text, onClick, font, pos, size, bevel)
+        self.tabSelected = tabSelected
 
     def render(self):
 
@@ -115,17 +125,19 @@ class TabButton(Button):
         else:
             backgroundColor = WHITE
 
+        # These do the same thing at the moment but it can be changed to give the selected tab a new box
+        # if self.tabSelected:
+        tabShape = [[self.pos[0] + self.bevel, self.pos[1]], [rightX - self.bevel, self.pos[1]], [rightX, self.pos[1] + self.bevel],
+                    [rightX, botY], [self.pos[0], botY], [self.pos[0], self.pos[1] + self.bevel]]
+        # else:
+        #     tabShape = [[self.pos[0] + self.bevel, self.pos[1]], [rightX - self.bevel, self.pos[1]], [rightX, self.pos[1] + self.bevel],
+        #                 [rightX, botY], [self.pos[0], botY], [self.pos[0], self.pos[1] + self.bevel]]
+
         # Fills the button with the interior color, depends on whether the mouse is hovering or not
-        pygame.draw.polygon(self.surface, backgroundColor,
-                            [[self.pos[0] + self.bevel, self.pos[1]], [rightX - self.bevel, self.pos[1]],
-                             [rightX, self.pos[1] + self.bevel], [rightX, botY], [self.pos[0], botY],
-                             [self.pos[0], self.pos[1] + self.bevel]])
+        pygame.draw.polygon(self.surface, backgroundColor, tabShape)
 
         # Thin black outline around the button
-        self.box = pygame.draw.polygon(self.surface, BLACK,
-                                       [[self.pos[0] + self.bevel, self.pos[1]], [rightX - self.bevel, self.pos[1]],
-                                        [rightX, self.pos[1] + self.bevel], [rightX, botY],
-                                        [self.pos[0], botY], [self.pos[0], self.pos[1] + self.bevel]], 1)
+        self.box = pygame.draw.polygon(self.surface, BLACK, tabShape, 1)
 
         text = self.font.render(self.text, False, (0, 0, 0))
 
@@ -133,28 +145,17 @@ class TabButton(Button):
         self.surface.blit(text, (
         self.pos[0] + (self.size[0] - textSize[0]) / 2, self.pos[1] + (self.size[1] - textSize[1]) / 2))
 
-class TextButton(Button):
+# This isn't a button subclass, but I'll leave it here because it's about buttons and uses a list of them
+class ButtonList:
 
-    def render(self):
-
-        text = self.font.render(self.text, False, (0, 0, 0))
-
-        textSize = self.font.size(self.text)
-        self.box = self.surface.blit(text, (self.pos[0] + (self.size[0] - textSize[0]) / 2, self.pos[1] + (self.size[1] - textSize[1]) / 2))
-
-class ButtonList(Button):
-
-    def __init__(self, texts, font, pos, size, gap, surface, direction = "horizontal", bevel="auto"):
+    def __init__(self, texts, onClicks, font, pos, size, gap, direction = "horizontal", bevel="auto"):
         self.buttons = []
-        super(ButtonList, self).__init__(texts, font, pos, size, surface, bevel)
-        self.gap = gap
-        self.dir = direction
 
         for i in range(0, len(texts)):
             if direction == "horizontal":
-                self.buttons.append(Button(texts[i], font, [pos[0]+(size[0]+gap)*i, pos[1]], size, surface, bevel))
+                self.buttons.append(Button(texts[i], onClicks[i], font, [pos[0]+(size[0]+gap)*i, pos[1]], size, bevel))
             else:
-                self.buttons.append(Button(texts[i], font, [pos[0], pos[1]+(size[1]+gap)*i], size, surface, bevel))
+                self.buttons.append(Button(texts[i], onClicks[i], font, [pos[0], pos[1]+(size[1]+gap)*i], size, bevel))
 
     def checkMouseOver(self):
         for button in self.buttons:
