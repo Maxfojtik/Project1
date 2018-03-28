@@ -35,9 +35,11 @@ class Button(object):
     def upClick(self):
         if self.downClicked and self.checkMouseOver():
             self.onClick()
+        else:
+            print("Hello")
         self.downClicked=False
 
-    def rescale(self, oldSize=(1,1), newSize=(1,1)): # for when the window is changed to a different size
+    def rescale(self, oldSize, newSize): # for when the window is changed to a different size
         self.pos = [self.pos[i]*(newSize[i]/oldSize[i]) for i in range(0,2)]
         self.size = [self.size[i]*(newSize[i]/oldSize[i]) for i in range(0,2)]
 

@@ -1,9 +1,8 @@
 from pygame.locals import *
-screenSize = (1000, 600)
+screenSize = (1280, 720)
 from buttons import *
 from screens import *
 from tabbedSection import *
-from colors import *
 import mainMenu
 
 pygame.init()
@@ -21,9 +20,6 @@ carryOn = True
 clock = pygame.time.Clock()
 fps = 60
 
-def onClickForStart():
-    print("On Click")
-
 # For every screen there is a class
 # These classes will have the information on the screen like buttons
 # To switch, change the variable which has the active screen, and then you can call its render function
@@ -35,7 +31,7 @@ screens = {
                someFont, [.75, .30], [.14,.07], .03, "vertical")
     ]),
     "Settings" : Screen([
-        TabbedSection(["Audio","Game","Video"],[0,0,0],[.1,.1],[.6,.5],someFont)
+        TabbedSection(["Audio","Game","Video"],[0,0,0],[0,.05],[1,.95],someFont)
     ]),
 }
 

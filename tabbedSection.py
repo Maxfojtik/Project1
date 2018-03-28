@@ -8,7 +8,7 @@ class TabbedSection:
         if buttonSize=="auto":
             buttonSize=(.14,.07)
 
-        self.tabSelected = 0;
+        self.tabSelected = 0
         self.buttons = []
         self.tabsContent = tabsContent
         self.tabNames = tabNames
@@ -43,8 +43,12 @@ class TabbedSection:
         for button in self.buttons:
             button.upClick()
 
-    def rescale(self, oldSize=1, newSize=1):
-        pass
+    def rescale(self, oldSize, newSize):
+        for button in self.buttons:
+            button.rescale(oldSize, newSize)
+
+        self.size = rescaleForSizeChange(self.size, oldSize, newSize)
+        self.pos = rescaleForSizeChange(self.pos, oldSize, newSize)
 
     def render(self):
 
