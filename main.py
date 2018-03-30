@@ -1,44 +1,13 @@
-from pygame.locals import *
-screenSize = (1280, 720)
-from buttons import *
-from screens import *
-from tabbedSection import *
-import mainMenu
-
-pygame.init()
-pygame.font.init()
-
-someFont = pygame.font.SysFont('Times New Roman', 15)
-
-windowScreen = pygame.display.set_mode(screenSize, RESIZABLE)
-pygame.display.set_caption("Project 1")
-
-# The loop will carry on until the user exit the game (e.g. clicks the close button).
-carryOn = True
+from screenState import *
 
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock()
 fps = 60
 
-# For every screen there is a class
-# These classes will have the information on the screen like buttons
-# To switch, change the variable which has the active screen, and then you can call its render function
-
-screens = {
-    "Main Menu" : Screen([
-        ButtonList(["Start Game", "Join Game", "Host Game", "Settings", "Credits", "Quit"],
-               [mainMenu.startGame,mainMenu.joinGame,mainMenu.hostGame,mainMenu.settings,mainMenu.gameCredits,mainMenu.quitGame],
-               someFont, [.75, .30], [.14,.07], .03, "vertical")
-    ]),
-    "Settings" : Screen([
-        TabbedSection(["Audio","Game","Video"],[0,0,0],[0,.05],[1,.95],someFont)
-    ]),
-}
-
-activeScreen = screens["Main Menu"]
-
 # -------- Main Program Loop -----------
+assert carryOn and screenSize
 while carryOn:
+    from screenState import * # Not sure why buttons only work if this line is here. why? Why? WHY? WHYYYYYY??????????
     # --- Main event loop
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close

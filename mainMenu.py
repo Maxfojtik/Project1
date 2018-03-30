@@ -1,3 +1,4 @@
+import screenState
 
 def startGame():
     print("Start Game")
@@ -9,15 +10,14 @@ def hostGame():
     print("Host Game")
 
 def settings():
-    import main # Unfortunately, this needs to be here
-    main.activeScreen = main.screens["Settings"]
+    screenState.activeScreen = screenState.screens["Settings"]
     print("Settings")
 
 def gameCredits():
     print("Credits")
 
 def quitGame():
-    import main
-    main.carryOn = False
+    screenState.carryOn = False
+    print("Quit")
 
 
