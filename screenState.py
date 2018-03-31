@@ -4,6 +4,7 @@ from tabbedSection import *
 from fonts import *
 from pygame.locals import *
 import mainMenu
+import settingsMenu
 
 # For every screen there is a class
 # These classes will have the information on the screen like buttons
@@ -24,7 +25,12 @@ screens = {
                    someFont, [.75, .30], [.14,.07], .03, "vertical")
     ]),
     "Settings" : Screen([
-        TabbedSection(["Audio","Game","Video"],[0,0,0],[0,.05],[1,.95],someFont)
+        TabbedSection(["Audio","Game","Video"],
+                      [[Button("Audio",settingsMenu.audio,someFont,[.42,.40],[.14,.07])],
+                       [Button("Game",settingsMenu.game,someFont,[.43,.40],[.14,.07])],
+                       [Button("Video", settingsMenu.video, someFont, [.44, .40], [.14, .07])]
+                       ],
+                      [0,.05],[1,.95],someFont)
     ]),
 }
 

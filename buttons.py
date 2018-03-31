@@ -19,8 +19,11 @@ class Button(object):
         if bevel == "auto":
             bevel = self.size[1]/4
         else:
-            self.bevel *= size[0]  # Scale the bevel for the screen
+            bevel *= size[0]  # Scale the bevel for the screen
         self.bevel = min(min(self.size[1]/2, self.size[0]/2), bevel)  # Makes sure that the bevel is less than the sides
+
+        assert pos[0]<1 and pos[1]<1
+        assert size[0]<1 and size[1]<1
 
         self.render() # Rendering initializes self.box
 
@@ -113,19 +116,30 @@ class TextButton(Button):
 # This needs a bit of a rework for a row of buttons before it is usable
 class TabButton(Button):
 
-    def __init__(self, text, onClick, font, pos, size, tabSelected=False, bevel="auto"):
+    def __init__(self, text, onClick, tabNumber, font, pos, size, bevel="auto", isSelected=False):
+        self.tabNumber = tabNumber
+        self.isSelected = isSelected
         super(TabButton, self).__init__(text, onClick, font, pos, size, bevel)
-        self.tabSelected = tabSelected
+
+    def upClick(self):
+        if self.downClicked and self.checkMouseOver():
+            self.onClick(self.tabNumber)
+        else:
+            print("Hello")
+        self.downClicked = False
 
     def render(self):
 
         rightX = self.pos[0] + self.size[0]
         botY = self.pos[1] + self.size[1]
 
-        if self.mouseOver:
-            backgroundColor = GRAY
+        if self.isSelected:
+            backgroundColor = LIGHT_GRAY
         else:
             backgroundColor = WHITE
+
+        if self.mouseOver:
+            backgroundColor = GRAY
 
         # These do the same thing at the moment but it can be changed to give the selected tab a new box
         # if self.tabSelected:

@@ -9,7 +9,7 @@ class TabbedSection:
             buttonSize=(.14,.07)
 
         self.tabSelected = 0
-        self.buttons = []
+        self.tabButtons = []
         self.tabsContent = tabsContent
         self.tabNames = tabNames
         # Pos and size are inputted as percentages, this scales them for the screen
@@ -19,32 +19,41 @@ class TabbedSection:
         self.surface = pygame.display.get_surface()
 
         if bevel == "auto":
-            bevel = self.size[1]/4
+            bevel = self.size[1]/6
         else:
             self.bevel *= size[0]  # Scale the bevel for the screen
         self.bevel = min(min(self.size[1]/2, self.size[0]/2), bevel)  # Makes sure that the bevel is less than the sides
 
         for i in range(0,len(tabNames)):
-            self.buttons.append(TabButton(tabNames[i], self.focus, font, [pos[0]+buttonSize[0]*i, pos[1]], buttonSize, bevel))
+            self.tabButtons.append(TabButton(tabNames[i], self.focus, i, font, [pos[0]+buttonSize[0]*i, pos[1]], buttonSize, bevel))
 
-
-    def focus(self): # This may need to be converted to a TabButton function
-        pass
+    def focus(self, tabNumber):
+        self.tabSelected = tabNumber
+        for button in self.tabButtons:
+            button.isSelected = False
+        self.tabButtons[tabNumber].isSelected = True
 
     def checkMouseOver(self):
-        for button in self.buttons:
+        for button in self.tabButtons:
             button.checkMouseOver()
+        for thing in self.tabsContent[self.tabSelected]:
+            thing.checkMouseOver()
 
     def downClick(self):
-        for button in self.buttons:
+        for button in self.tabButtons:
             button.downClick()
+        for thing in self.tabsContent[self.tabSelected]:
+            thing.downClick()
 
+    # Checks the upclick for all the things in the tabButtons and the current tab
     def upClick(self):
-        for button in self.buttons:
+        for button in self.tabButtons:
             button.upClick()
+        for thing in self.tabsContent[self.tabSelected]:
+            thing.upClick()
 
     def rescale(self, oldSize, newSize):
-        for button in self.buttons:
+        for button in self.tabButtons:
             button.rescale(oldSize, newSize)
 
         self.size = rescaleForSizeChange(self.size, oldSize, newSize)
@@ -60,9 +69,15 @@ class TabbedSection:
         self.surface.fill(BLUE, [self.pos[0], self.pos[1]+self.buttonSize[1], self.size[0], self.size[1]-self.buttonSize[1]])
         pygame.draw.rect(self.surface, BLACK, [self.pos[0], self.pos[1]+self.buttonSize[1], self.size[0], self.size[1]-self.buttonSize[1]], 1)
 
-        for button in self.buttons:
-            if not button.tabSelected:
+        # Renders all the buttons, starting with the non-selected buttons, so that the selected button can be rendered slightly on top if wanted
+        for button in self.tabButtons:
+            if not button.isSelected:
                 button.render()
-        for button in self.buttons:
-            if button.tabSelected:
+        for button in self.tabButtons:
+            if button.isSelected:
                 button.render()
+
+        # Render the content of the tab
+        for thing in self.tabsContent[self.tabSelected]:
+            thing.render()
+

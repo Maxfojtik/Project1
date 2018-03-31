@@ -1,13 +1,13 @@
 from screenState import *
 
 # The clock will be used to control how fast the screen updates
-clock = pygame.time.Clock()
+clock = pygame.time.Clock() # Why don't we need to import pygame?
 fps = 60
 
 # -------- Main Program Loop -----------
 assert carryOn and screenSize
 while carryOn:
-    from screenState import * # Not sure why buttons only work if this line is here. why? Why? WHY? WHYYYYYY??????????
+    from screenState import * # Not sure why buttons only work if this line is here. It's not necessarily a problem though
     # --- Main event loop
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
