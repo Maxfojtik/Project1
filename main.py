@@ -1,32 +1,39 @@
-from screenState import *
+import screenState
+import pygame
+from colors import *
 
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock() # Why don't we need to import pygame?
 fps = 60
 
+mousePressed = False
+
 # -------- Main Program Loop -----------
-assert carryOn and screenSize
-while carryOn:
-    from screenState import * # Not sure why buttons only work if this line is here. It's not necessarily a problem though
+assert screenState.carryOn and screenState.screenSize
+
+while screenState.carryOn:
     # --- Main event loop
     for event in pygame.event.get():  # User did something
         if event.type == pygame.QUIT:  # If user clicked close
-            carryOn = False  # Flag that we are done so we exit this loop.
+            screenState.carryOn = False  # Flag that we are done so we exit this loop.
 
-        activeScreen.checkMouseOver()
+        screenState.activeScreen.checkMouseOver()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            activeScreen.downClick()
+            screenState.activeScreen.downClick()
+            mousePressed = True
 
         elif event.type == pygame.MOUSEBUTTONUP:
-            activeScreen.upClick()
+            screenState.activeScreen.upClick()
+            mousePressed = False
 
         if event.type == pygame.VIDEORESIZE:
-            oldSize = screenSize
+            oldSize = screenState.screenSize
             surface = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
-            screenSize = pygame.display.get_surface().get_size()
-            for screen in screens.values():
-                screen.rescale(oldSize, screenSize)
+            screenState.screenSize = pygame.display.get_surface().get_size()
+            print(oldSize, screenState.screenSize)
+            for screen in screenState.screens.values():
+                screen.rescale(oldSize, screenState.screenSize)
 
 
     # --- Game logic should go here
@@ -34,8 +41,8 @@ while carryOn:
 
     # --- Drawing code below:
     # First, clear the screen to white.
-    windowScreen.fill(WHITE)
-    activeScreen.render()
+    screenState.windowScreen.fill(WHITE)
+    screenState.activeScreen.render()
 
     # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()

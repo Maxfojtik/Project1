@@ -4,13 +4,17 @@ from screenScaling import *
 
 class TabbedSection:
 
-    def __init__(self, tabNames, tabsContent, pos, size, font, buttonSize="auto", bevel="auto"):
+    def __init__(self, tabNames, tabsContent, pos, size, font, buttonSize="auto", bevel="auto", allTabs=None):
         if buttonSize=="auto":
             buttonSize=(.14,.07)
 
         self.tabSelected = 0
         self.tabButtons = []
         self.tabsContent = tabsContent
+        if allTabs: # If you have some allTab content
+            self.allTabs = allTabs
+        else:
+            self.allTabs = []
         self.tabNames = tabNames
         # Pos and size are inputted as percentages, this scales them for the screen
         self.pos = scale(pos)  # pos is (x,y), assumed to be the top left
@@ -26,6 +30,7 @@ class TabbedSection:
 
         for i in range(0,len(tabNames)):
             self.tabButtons.append(TabButton(tabNames[i], self.focus, i, font, [pos[0]+buttonSize[0]*i, pos[1]], buttonSize, bevel))
+        self.tabButtons[0].isSelected = True # Select the first one
 
     def focus(self, tabNumber):
         self.tabSelected = tabNumber
@@ -38,11 +43,15 @@ class TabbedSection:
             button.checkMouseOver()
         for thing in self.tabsContent[self.tabSelected]:
             thing.checkMouseOver()
+        for thing in self.allTabs:
+            thing.checkMouseOver()
 
     def downClick(self):
         for button in self.tabButtons:
             button.downClick()
         for thing in self.tabsContent[self.tabSelected]:
+            thing.downClick()
+        for thing in self.allTabs:
             thing.downClick()
 
     # Checks the upclick for all the things in the tabButtons and the current tab
@@ -51,10 +60,18 @@ class TabbedSection:
             button.upClick()
         for thing in self.tabsContent[self.tabSelected]:
             thing.upClick()
+        for thing in self.allTabs:
+            thing.upClick()
 
     def rescale(self, oldSize, newSize):
         for button in self.tabButtons:
             button.rescale(oldSize, newSize)
+        for thing in self.tabsContent[self.tabSelected]:
+            thing.rescale(oldSize, newSize)
+        for thing in self.allTabs:
+            thing.rescale(oldSize, newSize)
+
+        self.buttonSize = rescaleForSizeChange(self.buttonSize, oldSize, newSize)
 
         self.size = rescaleForSizeChange(self.size, oldSize, newSize)
         self.pos = rescaleForSizeChange(self.pos, oldSize, newSize)
@@ -81,3 +98,6 @@ class TabbedSection:
         for thing in self.tabsContent[self.tabSelected]:
             thing.render()
 
+        # Render the content which is for all tabs
+        for thing in self.allTabs:
+            thing.render()

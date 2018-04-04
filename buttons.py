@@ -1,6 +1,5 @@
-import pygame
 from colors import *
-
+from screenScaling import *
 
 class Button(object):
     def __init__(self, text, onClick, font, pos, size, bevel="auto"):
@@ -8,9 +7,8 @@ class Button(object):
         self.onClick = onClick
         self.font = font
         # Pos and size are inputted as percentages, this scales them for the screen
-        screenSize = pygame.display.get_surface().get_size()
-        self.pos = [pos[i]*screenSize[i] for i in range(0,2)]  # pos is (x,y), assumed to be the top left
-        self.size = [size[i]*screenSize[i] for i in range(0,2)]  # size is the dimensions of the button
+        self.pos = scale(pos)  # pos is (x,y), assumed to be the top left
+        self.size = scale(size)  # size is the dimensions of the button
         self.surface = pygame.display.get_surface()
 
         self.mouseOver = False # Keeps track of if the button is being moused over
@@ -25,10 +23,10 @@ class Button(object):
         assert pos[0]<1 and pos[1]<1
         assert size[0]<1 and size[1]<1
 
-        self.render() # Rendering initializes self.box
+        self.box = pygame.Rect(pos[0],pos[1],size[0],size[1])
 
     def checkMouseOver(self):
-        self.mouseOver = self.box.collidepoint(pygame.mouse.get_pos())
+        self.mouseOver = self.box.collidepoint(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
         return self.mouseOver
 
     def downClick(self):
@@ -38,13 +36,12 @@ class Button(object):
     def upClick(self):
         if self.downClicked and self.checkMouseOver():
             self.onClick()
-        else:
-            print("Hello")
         self.downClicked=False
 
     def rescale(self, oldSize, newSize): # for when the window is changed to a different size
-        self.pos = [self.pos[i]*(newSize[i]/oldSize[i]) for i in range(0,2)]
-        self.size = [self.size[i]*(newSize[i]/oldSize[i]) for i in range(0,2)]
+        self.pos = rescaleForSizeChange(self.pos, oldSize, newSize)
+        self.size = rescaleForSizeChange(self.size, oldSize, newSize)
+        self.bevel = rescaleForSizeChange(self.bevel, oldSize, newSize)
 
     def render(self):
 
@@ -113,19 +110,17 @@ class TextButton(Button):
         textSize = self.font.size(self.text)
         self.box = self.surface.blit(text, (self.pos[0] + (self.size[0] - textSize[0]) / 2, self.pos[1] + (self.size[1] - textSize[1]) / 2))
 
-# This needs a bit of a rework for a row of buttons before it is usable
 class TabButton(Button):
 
     def __init__(self, text, onClick, tabNumber, font, pos, size, bevel="auto", isSelected=False):
+        super(TabButton, self).__init__(text, onClick, font, pos, size, bevel)
         self.tabNumber = tabNumber
         self.isSelected = isSelected
-        super(TabButton, self).__init__(text, onClick, font, pos, size, bevel)
 
     def upClick(self):
         if self.downClicked and self.checkMouseOver():
             self.onClick(self.tabNumber)
-        else:
-            print("Hello")
+
         self.downClicked = False
 
     def render(self):
@@ -192,5 +187,3 @@ class ButtonList:
     def render(self):
         for button in self.buttons:
             button.render()
-
-# class ButtonSet() # Maybe something for a list of buttons, so you can make/display a bunch together?
