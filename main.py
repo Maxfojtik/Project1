@@ -1,6 +1,11 @@
 import screenState
 import pygame
 from colors import *
+import time
+
+start_time = time.time()
+x = 1 # displays the frame rate every x seconds
+counter = 0
 
 # The clock will be used to control how fast the screen updates
 clock = pygame.time.Clock() # Why don't we need to import pygame?
@@ -42,12 +47,20 @@ while screenState.carryOn:
     # --- Drawing code below:
     # First, clear the screen to white.
     screenState.windowScreen.fill(WHITE)
+
     screenState.activeScreen.render()
+    pygame.display.flip()
 
     # --- Go ahead and update the screen with what we've drawn.
     pygame.display.flip()
     # --- Limit to 60 frames per second
     clock.tick(fps)
+
+    counter += 1
+    if (time.time() - start_time) > x:
+        print("FPS: ", counter / (time.time() - start_time))
+        counter = 0
+        start_time = time.time()
 
 # Once we have exited the main program loop we can stop the game engine:
 pygame.quit()

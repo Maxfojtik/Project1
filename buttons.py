@@ -1,7 +1,8 @@
 from colors import *
-from screenScaling import *
+from screenTools import *
+import sprite
 
-class Button(object):
+class Button(sprite.Sprite):
     def __init__(self, text, onClick, font, pos, size, bevel="auto"):
         self.text = text
         self.onClick = onClick
@@ -23,20 +24,7 @@ class Button(object):
         assert pos[0]<1 and pos[1]<1
         assert size[0]<1 and size[1]<1
 
-        self.box = pygame.Rect(pos[0],pos[1],size[0],size[1])
-
-    def checkMouseOver(self):
-        self.mouseOver = self.box.collidepoint(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
-        return self.mouseOver
-
-    def downClick(self):
-        # Down click is here because buttons should only activate if you click down then up on them
-        self.downClicked = self.checkMouseOver()
-
-    def upClick(self):
-        if self.downClicked and self.checkMouseOver():
-            self.onClick()
-        self.downClicked=False
+        self.box = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
     def rescale(self, oldSize, newSize): # for when the window is changed to a different size
         self.pos = rescaleForSizeChange(self.pos, oldSize, newSize)
@@ -54,17 +42,10 @@ class Button(object):
             backgroundColor = WHITE
 
         # Fills the button with the interior color, depends on whether the mouse is hovering or not
-        pygame.draw.polygon(self.surface, backgroundColor,
-                            [[self.pos[0] + self.bevel, self.pos[1]], [rightX - self.bevel, self.pos[1]],
-                             [rightX, self.pos[1] + self.bevel], [rightX, botY - self.bevel],
-                             [rightX - self.bevel, botY], [self.pos[0] + self.bevel, botY],
-                             [self.pos[0], botY - self.bevel], [self.pos[0], self.pos[1] + self.bevel]])
+        pygame.draw.polygon(self.surface, backgroundColor,getPoly(self.pos,self.size,self.bevel))
 
         # Thin black outline around the button
-        self.box = pygame.draw.polygon(self.surface, BLACK, [[self.pos[0] + self.bevel, self.pos[1]], [rightX - self.bevel, self.pos[1]],
-                                                  [rightX, self.pos[1]+self.bevel], [rightX, botY-self.bevel],
-                                                  [rightX - self.bevel, botY], [self.pos[0] + self.bevel, botY],
-                                                  [self.pos[0], botY - self.bevel], [self.pos[0], self.pos[1] + self.bevel]], 1)
+        self.box = pygame.draw.polygon(self.surface, BLACK, getPoly(self.pos,self.size,self.bevel), 1)
 
         text = self.font.render(self.text, False, (0, 0, 0))
 
@@ -118,7 +99,7 @@ class TabButton(Button):
         self.isSelected = isSelected
 
     def upClick(self):
-        if self.downClicked and self.checkMouseOver():
+        if self.downClicked and self.isMouseOver():
             self.onClick(self.tabNumber)
 
         self.downClicked = False

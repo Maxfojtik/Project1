@@ -1,4 +1,4 @@
-import screenState
+import screenSwitch
 
 # ~~~~~~~~~~~~~~~~  Audio  ~~~~~~~~~~~~~~~~
 
@@ -19,9 +19,9 @@ def video():
 # ~~~~~~~~~~~~~~~~  General  ~~~~~~~~~~~~~~~~
 
 def cancel():
-    screenState.activeScreen = screenState.screens["Main Menu"]
+    screenSwitch.switchScreen("Main Menu")
     print("Cancel")
 
 def accept():
-    screenState.activeScreen = screenState.screens["Main Menu"]
+    screenSwitch.switchScreen("Main Menu")
     print("Accept")

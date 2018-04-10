@@ -1,4 +1,5 @@
 import screenState
+import screenSwitch
 
 def startGame():
     print("Start Game")
@@ -10,7 +11,7 @@ def hostGame():
     print("Host Game")
 
 def settings():
-    screenState.activeScreen = screenState.screens["Settings"]
+    screenSwitch.switchScreen("Settings")
     print("Settings")
 
 def gameCredits():

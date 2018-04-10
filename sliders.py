@@ -1,4 +1,4 @@
-from screenScaling import *
+from screenTools import *
 from colors import *
 
 class Slider(object):

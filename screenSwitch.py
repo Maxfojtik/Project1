@@ -1,3 +1,4 @@
+import screenState
 
 def switchScreen(switchTo):
-    pass
+    screenState.activeScreen = screenState.screens[switchTo]

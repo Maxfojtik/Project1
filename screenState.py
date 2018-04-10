@@ -19,6 +19,7 @@ pygame.display.set_caption("Project 1")
 
 carryOn = True
 
+
 screens = {
     "Main Menu" : Screen([
         ButtonList(["Start Game", "Join Game", "Host Game", "Settings", "Credits", "Quit"],

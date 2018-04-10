@@ -1,6 +1,6 @@
 from buttons import TabButton
 from colors import *
-from screenScaling import *
+from screenTools import *
 
 class TabbedSection:
 
