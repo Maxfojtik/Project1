@@ -1,4 +1,4 @@
-from screenTools import *
+from resources.screenTools import *
 
 class ScrollView:
 

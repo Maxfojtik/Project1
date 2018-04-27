@@ -1,0 +1,4 @@
+
+Rendering:
+Each thing, when it renders itself, should instantly blit the rectangle it is in to the screen, so that a section which renders outside of its box never shows
+

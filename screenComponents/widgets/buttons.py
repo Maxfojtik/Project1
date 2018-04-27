@@ -1,28 +1,27 @@
-from colors import *
-from screenTools import *
-import sprite
+from resources.colors import *
+from resources.screenTools import *
+from screenComponents.widgets import widget
 
-class Button(sprite.Sprite):
+
+class Button(widget.Widget):
     def __init__(self, text, onClick, font, pos, size, bevel="auto"):
+        assert 0<=pos[0]<1 and 0<=pos[1]<1
+        assert 0<=size[0]<=1 and 0<=size[1]<=1
+        assert size[0]+pos[0]<=1 and size[1]+pos[1]<=1
+
         self.text = text
         self.onClick = onClick
         self.font = font
         # Pos and size are inputted as percentages, this scales them for the screen
         self.pos = scale(pos)  # pos is (x,y), assumed to be the top left
         self.size = scale(size)  # size is the dimensions of the button
+
         self.surface = pygame.display.get_surface()
 
         self.mouseOver = False # Keeps track of if the button is being moused over
         self.downClicked = False # Keeps track of whether you clicked on the button but have not yet released
 
-        if bevel == "auto":
-            bevel = self.size[1]/4
-        else:
-            bevel *= size[0]  # Scale the bevel for the screen
-        self.bevel = min(min(self.size[1]/2, self.size[0]/2), bevel)  # Makes sure that the bevel is less than the sides
-
-        assert pos[0]<1 and pos[1]<1
-        assert size[0]<1 and size[1]<1
+        self.bevel = scaleOrDefault(bevel, diagonal(self.size)/12, [0, max(self.size[1]/2, self.size[0]/2)])
 
         self.box = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
@@ -32,9 +31,6 @@ class Button(sprite.Sprite):
         self.bevel = rescaleForSizeChange(self.bevel, oldSize, newSize)
 
     def render(self):
-
-        rightX = self.pos[0]+self.size[0]
-        botY = self.pos[1]+self.size[1]
 
         if self.mouseOver:
             backgroundColor = GRAY
@@ -52,37 +48,7 @@ class Button(sprite.Sprite):
         textSize = self.font.size(self.text)
         self.surface.blit(text, (self.pos[0]+(self.size[0]-textSize[0])/2, self.pos[1]+(self.size[1]-textSize[1])/2))
 
-class MenuButton(Button):
-
-    def render(self):
-
-        rightX = self.pos[0]+self.size[0]
-        botY = self.pos[1]+self.size[1]
-
-        if self.mouseOver:
-            backgroundColor = GRAY
-        else:
-            backgroundColor = WHITE
-
-        # Fills the button with the interior color, depends on whether the mouse is hovering or not
-        pygame.draw.polygon(self.surface, backgroundColor,
-                            [[self.pos[0] + self.bevel, self.pos[1]], [rightX - self.bevel, self.pos[1]],
-                             [rightX, self.pos[1] + self.bevel], [rightX, botY - self.bevel],
-                             [rightX - self.bevel, botY], [self.pos[0] + self.bevel, botY],
-                             [self.pos[0], botY - self.bevel], [self.pos[0], self.pos[1] + self.bevel]])
-
-        # Thin black outline around the button
-        self.box = pygame.draw.polygon(self.surface, BLACK, [[self.pos[0] + self.bevel, self.pos[1]], [rightX - self.bevel, self.pos[1]],
-                                                  [rightX, self.pos[1]+self.bevel], [rightX, botY-self.bevel],
-                                                  [rightX - self.bevel, botY], [self.pos[0] + self.bevel, botY],
-                                                  [self.pos[0], botY - self.bevel], [self.pos[0], self.pos[1] + self.bevel]], 1)
-
-        text = self.font.render(self.text, False, (0, 0, 0))
-
-        textSize = self.font.size(self.text)
-        self.surface.blit(text, (self.pos[0]+(self.size[0]-textSize[0])/2, self.pos[1]+(self.size[1]-textSize[1])/2))
-
-class TextButton(Button):
+class TextButton(Button): # Text you can click on
 
     def render(self):
 
@@ -117,32 +83,25 @@ class TabButton(Button):
         if self.mouseOver:
             backgroundColor = GRAY
 
-        # These do the same thing at the moment but it can be changed to give the selected tab a new box
-        # if self.tabSelected:
         tabShape = [[self.pos[0] + self.bevel, self.pos[1]], [rightX - self.bevel, self.pos[1]], [rightX, self.pos[1] + self.bevel],
                     [rightX, botY], [self.pos[0], botY], [self.pos[0], self.pos[1] + self.bevel]]
-        # else:
-        #     tabShape = [[self.pos[0] + self.bevel, self.pos[1]], [rightX - self.bevel, self.pos[1]], [rightX, self.pos[1] + self.bevel],
-        #                 [rightX, botY], [self.pos[0], botY], [self.pos[0], self.pos[1] + self.bevel]]
 
-        # Fills the button with the interior color, depends on whether the mouse is hovering or not
-        pygame.draw.polygon(self.surface, backgroundColor, tabShape)
+        pygame.draw.polygon(self.surface, backgroundColor, tabShape)  # Fills the button with the interior color
 
-        # Thin black outline around the button
-        self.box = pygame.draw.polygon(self.surface, BLACK, tabShape, 1)
+        self.box = pygame.draw.polygon(self.surface, BLACK, tabShape, 1)  # Thin black outline around the button
 
         text = self.font.render(self.text, False, (0, 0, 0))
 
         textSize = self.font.size(self.text)
-        self.surface.blit(text, (
-        self.pos[0] + (self.size[0] - textSize[0]) / 2, self.pos[1] + (self.size[1] - textSize[1]) / 2))
+        self.surface.blit(text, (self.pos[0] + (self.size[0] - textSize[0]) / 2, self.pos[1] + (self.size[1] - textSize[1]) / 2))
 
 # This isn't a button subclass, but I'll leave it here because it's about buttons and uses a list of them
+# Should button list instead just be a function which makes a lot of buttons? It would function similarly
 class ButtonList:
 
     def __init__(self, texts, onClicks, font, pos, size, gap, direction = "horizontal", bevel="auto"):
-        self.buttons = []
 
+        self.buttons = []
         for i in range(0, len(texts)):
             if direction == "horizontal":
                 self.buttons.append(Button(texts[i], onClicks[i], font, [pos[0]+(size[0]+gap)*i, pos[1]], size, bevel))

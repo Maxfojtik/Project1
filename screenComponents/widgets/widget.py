@@ -1,6 +1,6 @@
-from screenTools import *
+from resources.screenTools import *
 
-class Sprite(object):
+class Widget(object):
 
     def isMouseOver(self):
         return self.box.collidepoint(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
@@ -18,7 +18,7 @@ class Sprite(object):
         self.downClicked = False
 
     def render(self):
-        raise Exception("sprite's render function should not be called, make one for each class")
+        raise Exception("widget's render function should not be called, make one for each class")
 
-    def rescale(self):
-        raise Exception("sprite's rescale function should not be called, make one for each class")
+    def rescale(self, oldSize, newSize):
+        raise Exception("widget's rescale function should not be called, make one for each class")

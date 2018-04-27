@@ -1,6 +1,6 @@
-from buttons import TabButton
-from colors import *
-from screenTools import *
+from screenComponents.widgets.buttons import TabButton
+from resources.colors import *
+from resources.screenTools import *
 
 class TabbedSection:
 
@@ -22,11 +22,7 @@ class TabbedSection:
         self.buttonSize = scale(buttonSize)  # The dimensions of the tab buttons
         self.surface = pygame.display.get_surface()
 
-        if bevel == "auto":
-            bevel = self.size[1]/6
-        else:
-            self.bevel *= size[0]  # Scale the bevel for the screen
-        self.bevel = min(min(self.size[1]/2, self.size[0]/2), bevel)  # Makes sure that the bevel is less than the sides
+        self.bevel = scaleOrDefault(bevel, diagonal(self.size) / 6, [min(self.size[1] / 2, self.size[0] / 2), max(self.size[1] / 2, self.size[0] / 2)])
 
         for i in range(0,len(tabNames)):
             self.tabButtons.append(TabButton(tabNames[i], self.focus, i, font, [pos[0]+buttonSize[0]*i, pos[1]], buttonSize, bevel))
