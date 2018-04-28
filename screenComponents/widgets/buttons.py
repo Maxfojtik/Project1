@@ -16,8 +16,6 @@ class Button(widget.Widget):
         self.pos = scale(pos)  # pos is (x,y), assumed to be the top left
         self.size = scale(size)  # size is the dimensions of the button
 
-        self.surface = pygame.display.get_surface()
-
         self.mouseOver = False # Keeps track of if the button is being moused over
         self.downClicked = False # Keeps track of whether you clicked on the button but have not yet released
 
@@ -30,7 +28,7 @@ class Button(widget.Widget):
         self.size = rescaleForSizeChange(self.size, oldSize, newSize)
         self.bevel = rescaleForSizeChange(self.bevel, oldSize, newSize)
 
-    def render(self):
+    def render(self, surface):
 
         if self.mouseOver:
             backgroundColor = GRAY
@@ -38,24 +36,29 @@ class Button(widget.Widget):
             backgroundColor = WHITE
 
         # Fills the button with the interior color, depends on whether the mouse is hovering or not
-        pygame.draw.polygon(self.surface, backgroundColor,getPoly(self.pos,self.size,self.bevel))
+        pygame.draw.polygon(surface, backgroundColor,getPoly(self.pos,self.size,self.bevel))
+
+        pygame.draw.rect(surface, GRAY, (0,0,1000,100))
+        surface.blit(surface, (0,0))
 
         # Thin black outline around the button
-        self.box = pygame.draw.polygon(self.surface, BLACK, getPoly(self.pos,self.size,self.bevel), 1)
+        self.box = pygame.draw.polygon(surface, BLACK, getPoly(self.pos,self.size,self.bevel), 1)
 
         text = self.font.render(self.text, False, (0, 0, 0))
 
         textSize = self.font.size(self.text)
-        self.surface.blit(text, (self.pos[0]+(self.size[0]-textSize[0])/2, self.pos[1]+(self.size[1]-textSize[1])/2))
+        surface.blit(text, (self.pos[0]+(self.size[0]-textSize[0])/2, self.pos[1]+(self.size[1]-textSize[1])/2))
+
 
 class TextButton(Button): # Text you can click on
 
-    def render(self):
+    def render(self, surface):
 
         text = self.font.render(self.text, False, (0, 0, 0))
 
         textSize = self.font.size(self.text)
-        self.box = self.surface.blit(text, (self.pos[0] + (self.size[0] - textSize[0]) / 2, self.pos[1] + (self.size[1] - textSize[1]) / 2))
+        self.box = surface.blit(text, (self.pos[0] + (self.size[0] - textSize[0]) / 2, self.pos[1] + (self.size[1] - textSize[1]) / 2))
+
 
 class TabButton(Button):
 
@@ -70,7 +73,7 @@ class TabButton(Button):
 
         self.downClicked = False
 
-    def render(self):
+    def render(self, surface):
 
         rightX = self.pos[0] + self.size[0]
         botY = self.pos[1] + self.size[1]
@@ -86,14 +89,15 @@ class TabButton(Button):
         tabShape = [[self.pos[0] + self.bevel, self.pos[1]], [rightX - self.bevel, self.pos[1]], [rightX, self.pos[1] + self.bevel],
                     [rightX, botY], [self.pos[0], botY], [self.pos[0], self.pos[1] + self.bevel]]
 
-        pygame.draw.polygon(self.surface, backgroundColor, tabShape)  # Fills the button with the interior color
+        pygame.draw.polygon(surface, backgroundColor, tabShape)  # Fills the button with the interior color
 
-        self.box = pygame.draw.polygon(self.surface, BLACK, tabShape, 1)  # Thin black outline around the button
+        self.box = pygame.draw.polygon(surface, BLACK, tabShape, 1)  # Thin black outline around the button
 
         text = self.font.render(self.text, False, (0, 0, 0))
 
         textSize = self.font.size(self.text)
-        self.surface.blit(text, (self.pos[0] + (self.size[0] - textSize[0]) / 2, self.pos[1] + (self.size[1] - textSize[1]) / 2))
+        surface.blit(text, (self.pos[0] + (self.size[0] - textSize[0]) / 2, self.pos[1] + (self.size[1] - textSize[1]) / 2))
+
 
 # This isn't a button subclass, but I'll leave it here because it's about buttons and uses a list of them
 # Should button list instead just be a function which makes a lot of buttons? It would function similarly
@@ -124,6 +128,6 @@ class ButtonList:
         for button in self.buttons:
             button.rescale(oldSize, newSize)
 
-    def render(self):
+    def render(self, surface):
         for button in self.buttons:
-            button.render()
+            button.render(surface)

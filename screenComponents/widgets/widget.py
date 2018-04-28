@@ -17,7 +17,7 @@ class Widget(object):
             self.onClick()
         self.downClicked = False
 
-    def render(self):
+    def render(self, surface):
         raise Exception("widget's render function should not be called, make one for each class")
 
     def rescale(self, oldSize, newSize):

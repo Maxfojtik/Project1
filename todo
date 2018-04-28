@@ -2,3 +2,13 @@
 Rendering:
 Each thing, when it renders itself, should instantly blit the rectangle it is in to the screen, so that a section which renders outside of its box never shows
 
+Widgets to be made:
+Drop Down - System for selecting one option
+Text View - Shows text
+Edit Text - Text box you type in
+
+Containers to be made:
+Popup - Draggable area
+ScrollView - Scrollable area
+
+Mouseover Popups - When hovering over a widget, something which can show up and give more detail

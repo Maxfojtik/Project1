@@ -1,11 +1,12 @@
 from screenComponents.widgets.buttons import *
 from screenComponents.widgets.switches import *
-from screenComponents.containers.screens import *
 from screenComponents.containers.tabbedSection import *
 from resources.fonts import *
 from pygame.locals import *
 from screenComponents.widgets.sliders import *
 from screens import mainMenu, settingsMenu
+from defines.debug import *
+from screenComponents.containers.scrollView import *
 
 
 def switchScreen(switchTo, backward=False): # Switch between screens
@@ -13,13 +14,18 @@ def switchScreen(switchTo, backward=False): # Switch between screens
     activeScreen = screens[switchTo]
     if not backward:
         prevScreens.append(switchTo)
-        print("Forward to:",switchTo)
+        if PRINT_SCREEN_SWITCHING:
+            print("Forward to:",switchTo,"New array:",prevScreens)
     return activeScreen
 
 def back(): # Go back to the previous screen
-    the = prevScreens.pop(0)
-    print ("Backward to:",the)
-    switchScreen(the, True)
+    goal = prevScreens[0]
+    prevScreens.pop()
+    if PRINT_SCREEN_SWITCHING:
+        print ("Backward to:",goal,end=" ")
+    switchScreen(goal, True)
+    if PRINT_SCREEN_SWITCHING:
+        print("New array:",prevScreens)
 
 
 # For every screen there is a dictionary entry
@@ -39,6 +45,11 @@ prevScreens = [] # The names (keys) of previous screens, with the top entry bein
 
 screens = {
     "Main Menu" : Screen([
+        ScrollView(
+            [
+                Button("hello", print, someFont, (.2,.3),(.14,.07))
+            ], (.15,.25), (.1,.1)
+        ),
         ButtonList(["Start Game", "Join Game", "Host Game", "Settings", "Credits", "Quit"],
                    [mainMenu.startGame, mainMenu.joinGame, mainMenu.hostGame, mainMenu.settings, mainMenu.gameCredits, mainMenu.quitGame],
                    someFont, [.75, .30], [.14,.07], .03, "vertical")

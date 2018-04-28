@@ -49,8 +49,6 @@ while screenState.carryOn:
     screenState.activeScreen.render()
     pygame.display.flip()
 
-    # --- Go ahead and update the screen with what we've drawn.
-    pygame.display.flip()
     # --- Limit to 60 frames per second
     clock.tick(fps)
 

@@ -1,13 +1,12 @@
 from screenComponents.widgets.buttons import TabButton
 from resources.colors import *
 from resources.screenTools import *
+from screenComponents.containers.screen import Screen
 
-class TabbedSection:
+class TabbedSection(Screen):
 
     def __init__(self, tabNames, tabsContent, pos, size, font, buttonSize="auto", bevel="auto", allTabs=None):
-        if buttonSize=="auto":
-            buttonSize=(.14,.07)
-
+        Screen.__init__(self, tabsContent, pos, size)
         self.tabSelected = 0
         self.tabButtons = []
         self.tabsContent = tabsContent
@@ -16,13 +15,11 @@ class TabbedSection:
         else:
             self.allTabs = []
         self.tabNames = tabNames
-        # Pos and size are inputted as percentages, this scales them for the screen
-        self.pos = scale(pos)  # pos is (x,y), assumed to be the top left
-        self.size = scale(size)  # size is the dimensions of the tabbed section
-        self.buttonSize = scale(buttonSize)  # The dimensions of the tab buttons
+        self.buttonSize = scaleOrDefault(buttonSize, scale((.14, .07)))
         self.surface = pygame.display.get_surface()
 
-        self.bevel = scaleOrDefault(bevel, diagonal(self.size) / 6, [min(self.size[1] / 2, self.size[0] / 2), max(self.size[1] / 2, self.size[0] / 2)])
+        buttonSize = scaleOrDefault(buttonSize, [.14, .07])
+        bevel = scaleOrDefault(bevel, "auto", [min(buttonSize[0] / 2, buttonSize[1] / 2), min(buttonSize[1], buttonSize[0])])
 
         for i in range(0,len(tabNames)):
             self.tabButtons.append(TabButton(tabNames[i], self.focus, i, font, [pos[0]+buttonSize[0]*i, pos[1]], buttonSize, bevel))
@@ -97,3 +94,5 @@ class TabbedSection:
         # Render the content which is for all tabs
         for thing in self.allTabs:
             thing.render()
+
+        pygame.display.update([self.pos[0], self.pos[1], self.size[0], self.size[1]])

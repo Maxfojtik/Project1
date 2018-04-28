@@ -14,7 +14,7 @@ def scaleOrDefault(num, default, cap=None):
     val = default
     if num != "auto":
         val = scale(num)
-    if cap:
+    if cap and default != "auto":
         val = max(cap[0], min(cap[1], val))
     return val
 

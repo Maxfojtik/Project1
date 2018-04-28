@@ -1,0 +1,3 @@
+
+
+PRINT_SCREEN_SWITCHING = False
