@@ -12,3 +12,36 @@ Popup - Draggable area
 ScrollView - Scrollable area
 
 Mouseover Popups - When hovering over a widget, something which can show up and give more detail
+
+Explanation for some stuff:
+main:
+    Event handling
+    Rendering
+    Frame rate
+
+screenState:
+    The current screen
+    Currently has all the screens stored in it
+    Has functions for switching screens
+
+widgets folder:
+    Has all the widgets
+    Widgets are subclasses of widget
+    A widget is anything you click on / interact with which does not contain arbitrary other widgets
+    Every widget has a couple of functions which are outlined in widget.py and mostly updated in the individual widget's folder
+
+containers folder:
+    Has all the containers
+    Containers are subclasses of screen
+    A container is anything that could contain some arbitrary amount or type of widgets and or containers
+    Every screen is a Screen
+
+resources folder:
+    colors and fonts are pretty self explanatory
+    screenTools has functions like resizing that are useful everywhere, mostly to cut down on math
+        You don't have to know how it works but you should know what the functions do
+
+screens folder:
+    mainMenu and settingsMenu have the functions for the onclick of any widgets in them
+
+

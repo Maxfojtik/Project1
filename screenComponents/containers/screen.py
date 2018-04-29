@@ -7,6 +7,7 @@ class Screen(object):
         self.size = scale(size)
         self.box = pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
         self.mouseOver = self.box.collidepoint(pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1])
+        # self.surface =
 
     def isMouseOver(self):
         return self.box.collidepoint(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1])
@@ -32,7 +33,7 @@ class Screen(object):
         self.pos = rescaleForSizeChange(self.pos, oldSize, newSize)
         self.size = rescaleForSizeChange(self.size, oldSize, newSize)
 
-    def render(self):
+    def render(self, surface):
         for thing in self.thingsInside:
-            thing.render()
+            thing.render(self.surface)
         # pygame.display.update([self.pos[0], self.pos[1], self.size[0], self.size[1]])
